@@ -1,3 +1,12 @@
+# Main Screen
+![image1](preview/image1.JPG)
+
+# Login form
+![image1](preview/image2.JPG)
+
+# Todo list view
+![image1](preview/image3.JPG)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
