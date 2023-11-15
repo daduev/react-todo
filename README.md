@@ -1,8 +1,10 @@
-# Main Screen
+# To Do preview screens
+
+## Main Screen
 ![image1](preview/image1.JPG)
 
-# Login form
+## Login form
 ![image2](preview/image2.JPG)
 
-# Todo list view
+## Todo list view
 ![image3](preview/image3.JPG)
