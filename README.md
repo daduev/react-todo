@@ -2,10 +2,10 @@
 ![image1](preview/image1.JPG)
 
 # Login form
-![image1](preview/image2.JPG)
+![image2](preview/image2.JPG)
 
 # Todo list view
-![image1](preview/image3.JPG)
+![image3](preview/image3.JPG)
 
 # Getting Started with Create React App
 
