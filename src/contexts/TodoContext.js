@@ -8,16 +8,16 @@ export const TodoProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
+  /*
   useEffect(() => {
     get();
   }, [isLoading, user.username]);
+*/
 
   const get = async () => {
-    const response = await fetch(
-      "https://my-local-dev/api/private/todo", {
-        credentials: "include",
-      }
-    );
+    const response = await fetch("https://my-local-dev/api/private/todo", {
+      credentials: "include",
+    });
 
     if (response.status === 200) {
       const data = await response.json();
@@ -30,12 +30,12 @@ export const TodoProvider = ({ children }) => {
   const add = async () => {
     setLoading(true);
     let response = await fetch("https://my-local-dev/api/private/todo/add", {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
-        text: null
+        text: null,
       }),
       headers: {
-        'Content-type': 'application/json; charset=UTF-8',
+        "Content-type": "application/json; charset=UTF-8",
       },
       credentials: "include",
     });
@@ -44,18 +44,21 @@ export const TodoProvider = ({ children }) => {
 
   const update = async (id) => {
     setLoading(true);
-    let newText = todos.filter(el => el.id === id)[0].text;
+    let newText = todos.filter((el) => el.id === id)[0].text;
 
-    let response = await fetch(`https://my-local-dev/api/private/todo/${id}/edit`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        text: newText,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-      credentials: "include",
-    });
+    let response = await fetch(
+      `https://my-local-dev/api/private/todo/${id}/edit`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          text: newText,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        credentials: "include",
+      }
+    );
     setLoading(false);
   };
 
@@ -64,7 +67,7 @@ export const TodoProvider = ({ children }) => {
     let response = await fetch(
       `https://my-local-dev/api/private/todo/${id}/delete`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         credentials: "include",
       }
     );
@@ -82,20 +85,23 @@ export const TodoProvider = ({ children }) => {
 
   const complete = async (id) => {
     setLoading(true);
-    let done = !todos.filter(el => el.id === id)[0].done;
+    let done = !todos.filter((el) => el.id === id)[0].done;
 
-    let response = await fetch(`https://my-local-dev/api/private/todo/${id}/done/${done}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        done
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-      credentials: "include",
-    });
+    let response = await fetch(
+      `https://my-local-dev/api/private/todo/${id}/done/${done}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          done,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        credentials: "include",
+      }
+    );
     setLoading(false);
-  }
+  };
 
   return (
     <TodoContext.Provider
@@ -105,7 +111,7 @@ export const TodoProvider = ({ children }) => {
         add,
         update,
         del,
-        complete
+        complete,
       }}
     >
       {children}
