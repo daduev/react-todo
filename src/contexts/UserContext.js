@@ -5,8 +5,7 @@ const UserContext = createContext(undefined);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState({});
 
-  const domain = "https://dev-walx.onrender.com";
-  //const domain = "http://localhost:8080";
+  const domain = "http://localhost:8080";
 
   useEffect(() => {
     const getCurrentUser = async () => {

@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useUserContext } from "../contexts/UserContext";
+//import { useUserContext } from "../contexts/UserContext";
 
 const TodoContext = createContext(undefined);
 
 export const TodoProvider = ({ children }) => {
-  const { user } = useUserContext();
+  //const { user } = useUserContext();
   const [todos, setTodos] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
