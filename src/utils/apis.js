@@ -1,5 +1,5 @@
-//const domain = "https://dev-walx.onrender.com";
-const domain = "http://localhost:8080";
+const domain = "https://dev-walx.onrender.com";
+//const domain = "http://localhost:8080";
 const apiPublicPrefix = "api/public";
 const apiPrivatePrefix = "api/private";
 
