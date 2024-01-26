@@ -1,5 +1,5 @@
-const domain = "https://dev-walx.onrender.com";
-//const domain = "http://localhost:8080";
+//const domain = "https://dev-walx.onrender.com";
+const domain = "http://localhost:8080";
 const apiPublicPrefix = "api/public";
 const apiPrivatePrefix = "api/private";
 
@@ -8,6 +8,7 @@ const apis = {
     currentUser: `${domain}/${apiPrivatePrefix}/users/current`,
     login: `${domain}/${apiPublicPrefix}/login`,
     logout: `${domain}/api/logout`,
+    signup: `${domain}/${apiPublicPrefix}/signup`,
   },
   todoApis: {
     todos: `${domain}/${apiPrivatePrefix}/todos`,

@@ -1,15 +1,17 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import Header from "./components/Header";
-import Main from "./components/Main";
 import { Provider } from "react-redux";
 import store from "./redux/store/store";
+import { RouterProvider } from "react-router-dom";
+import routerRules from "./router/routerRules";
+import { createStandaloneToast } from "@chakra-ui/react";
 
 function App() {
+  const { ToastContainer } = createStandaloneToast();
   return (
     <ChakraProvider>
       <Provider store={store}>
-        <Header />
-        <Main />
+        <RouterProvider router={routerRules} />
+        <ToastContainer />
       </Provider>
     </ChakraProvider>
   );

@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { logoutTodoAction, getTodosAction } from "../todos/todoSlice";
+import { cleanTodoAction, getTodosAction } from "../todos/todoSlice";
 import axios from "axios";
-import "../../../utils/axiosConfig";
 import apis from "../../../utils/apis";
 
 const initialState = {
@@ -9,6 +8,22 @@ const initialState = {
   error: null,
   user: {},
 };
+
+//registration action
+export const signupUserAction = createAsyncThunk(
+  "user/signup",
+  async ({ username, password }, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const res = await axios.post(apis.userApis.signup, {
+        username,
+        password,
+      });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
 
 //login action
 export const loginUserAction = createAsyncThunk(
@@ -33,7 +48,7 @@ export const logoutUserAction = createAsyncThunk(
   async (payload, { rejectWithValue, getState, dispatch }) => {
     try {
       const res = await axios.post(apis.userApis.logout);
-      dispatch(logoutTodoAction());
+      dispatch(cleanTodoAction());
       return res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -57,7 +72,26 @@ export const getCurrentUserAction = createAsyncThunk(
 const usersSlice = createSlice({
   name: "users",
   initialState,
+  reducers: {
+    //clean up user
+    cleanUserAction: (state, action) => {
+      state.user = {};
+    },
+  },
   extraReducers: (builder) => {
+    //signup
+    builder.addCase(signupUserAction.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(signupUserAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = {};
+    });
+    builder.addCase(signupUserAction.rejected, (state, action) => {
+      state.loading = false;
+      state.user = {};
+      state.error = action.payload;
+    });
     //login
     builder.addCase(loginUserAction.pending, (state, action) => {
       state.loading = true;
@@ -68,6 +102,7 @@ const usersSlice = createSlice({
     });
     builder.addCase(loginUserAction.rejected, (state, action) => {
       state.loading = false;
+      state.user = {};
       state.error = action.payload;
     });
     //logout
@@ -80,6 +115,7 @@ const usersSlice = createSlice({
     });
     builder.addCase(logoutUserAction.rejected, (state, action) => {
       state.loading = false;
+      state.user = {};
       state.error = action.payload;
     });
     //getCurrentUser
@@ -92,11 +128,14 @@ const usersSlice = createSlice({
     });
     builder.addCase(getCurrentUserAction.rejected, (state, action) => {
       state.loading = false;
+      state.user = {};
       state.error = action.payload;
     });
   },
 });
 
 const usersReducer = usersSlice.reducer;
+
+export const { cleanUserAction } = usersSlice.actions;
 
 export default usersReducer;

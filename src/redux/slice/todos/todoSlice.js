@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import "../../../utils/axiosConfig";
 import apis from "../../../utils/apis";
 
 const initialState = {
+  hideCompleted: false,
   loading: false,
   error: null,
   todos: [],
@@ -14,7 +14,11 @@ export const getTodosAction = createAsyncThunk(
   "todos/getTodos",
   async (payload, { rejectWithValue, getState, dispatch }) => {
     try {
-      const resp = await axios.get(apis.todoApis.todos);
+      const params = {};
+      if (getState()?.todos?.hideCompleted === true) {
+        params.hideCompleted = true;
+      }
+      const resp = await axios.get(apis.todoApis.todos, { params });
       return resp.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -28,7 +32,7 @@ export const addTodoAction = createAsyncThunk(
   async (payload, { rejectWithValue, getState, dispatch }) => {
     try {
       const res = await axios.post(`${apis.todoApis.todos}/add`, {
-        text: null,
+        text: payload.text,
       });
       await dispatch(getTodosAction());
       return res.data;
@@ -89,21 +93,26 @@ export const doneTodoAction = createAsyncThunk(
 const todosSlice = createSlice({
   name: "todos",
   initialState,
+  //sync
   reducers: {
-    //clean up todos arrays on logout
-    logoutTodoAction: (state, action) => {
+    //clean up todos arrays
+    cleanTodoAction: (state, action) => {
       state.todos = [];
     },
-    //change todos on onChange event
+    //change todos on input onChange event
     onChangeTodosAction: (state, action) => {
       state.todos = state.todos.map((obj) => {
         if (obj.id === action.payload.id) {
-          return { ...obj, text: action.payload.newText };
+          return { ...obj, text: action.payload.newText, changed: true };
         }
         return obj;
       });
     },
+    onChangeHideCompletedAction: (state, action) => {
+      state.hideCompleted = action.payload.hideCompleted;
+    },
   },
+  //async
   extraReducers: (builder) => {
     //getTodos
     builder.addCase(getTodosAction.pending, (state, action) => {
@@ -111,9 +120,16 @@ const todosSlice = createSlice({
     });
     builder.addCase(getTodosAction.fulfilled, (state, action) => {
       state.loading = false;
+      /*
+      state.todos = action.payload.map((item) => ({
+        ...item,
+        changed: false,
+      }));
+      */
       state.todos = action.payload;
     });
     builder.addCase(getTodosAction.rejected, (state, action) => {
+      state.todos = [];
       state.loading = false;
       state.error = action.payload;
     });
@@ -166,5 +182,10 @@ const todosSlice = createSlice({
 
 const todosReducer = todosSlice.reducer;
 
-export const { logoutTodoAction, onChangeTodosAction } = todosSlice.actions;
+export const {
+  cleanTodoAction,
+  onChangeTodosAction,
+  onChangeHideCompletedAction,
+} = todosSlice.actions;
+
 export default todosReducer;

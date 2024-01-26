@@ -1,69 +1,81 @@
-import { Flex, Box, Spacer, Heading, Button } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Spacer,
+  Heading,
+  Text,
+  HStack,
+  IconButton,
+  Button,
+} from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  loginUserAction,
   logoutUserAction,
   getCurrentUserAction,
 } from "../redux/slice/users/usersSlice";
-import { addTodoAction } from "../redux/slice/todos/todoSlice";
-import User from "./User";
+import TaskControl from "./HeaderTaskControl";
+import LoginUser from "./LoginUser";
 import { useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import useTodoRouter from "../hooks/useTodoRouter";
 
 const Header = () => {
   const dispatch = useDispatch();
+  const navigate = useTodoRouter();
 
   const { loading, user } = useSelector((state) => {
     return state?.users;
   });
 
-  const cleanUserInput = () => {};
-
   useEffect(() => {
     dispatch(getCurrentUserAction());
   }, [dispatch]);
 
-  const submit = (formJson) => {
-    dispatch(loginUserAction(formJson));
-    cleanUserInput();
-  };
-
   const logout = () => {
-    dispatch(logoutUserAction());
-  };
-
-  const addTodo = () => {
-    dispatch(addTodoAction());
+    dispatch(logoutUserAction())
+      .unwrap()
+      .then(() => navigate("/"))
+      .catch(() => {});
   };
 
   return (
-    <Flex backgroundColor="#18181b" color="white" alignItems="center">
+    <Flex bg="#373737" color="white" alignItems="center">
       <Box p="4">
-        <Heading size="lg">To Do</Heading>
+        <Heading size="lg">ToDo</Heading>
       </Box>
 
       <Spacer />
 
       <Box p="4">
-        <Button
-          colorScheme="blue"
-          onClick={() => addTodo()}
-          isDisabled={!user?.username}
-          isLoading={loading}
-        >
-          Add New Task
-        </Button>
+        <TaskControl userLoading={loading} user={user} />
       </Box>
 
       <Spacer />
 
       <Box p="4">
-        <User
-          onSubmit={submit}
-          onLogout={logout}
-          username={user?.username}
-          loading={loading}
-          onCleanUserInput={cleanUserInput}
-        />
+        <HStack>
+          {user?.username ? (
+            <HStack alignItems="center">
+              <Text fontSize="lg">{user?.username}</Text>
+              <IconButton
+                onClick={logout}
+                variant="link"
+                icon={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
+              />
+            </HStack>
+          ) : (
+            <LoginUser loading={loading} />
+          )}
+          {!user?.username && (
+            <Button
+              colorScheme="blue"
+              onClick={() => navigate("/registration")}
+            >
+              Registration
+            </Button>
+          )}
+        </HStack>
       </Box>
     </Flex>
   );
