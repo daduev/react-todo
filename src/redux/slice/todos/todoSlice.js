@@ -7,6 +7,8 @@ const initialState = {
   loading: false,
   error: null,
   todos: [],
+  todoGroup: null,
+  todoGroups: [],
 };
 
 //get todos
@@ -18,7 +20,10 @@ export const getTodosAction = createAsyncThunk(
       if (getState()?.todos?.hideCompleted === true) {
         params.hideCompleted = true;
       }
-      const resp = await axios.get(apis.todoApis.todos, { params });
+      const resp = await axios.get(
+        `${apis.todoApis.todos}/${payload.groupId}`,
+        { params }
+      );
       return resp.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -31,10 +36,11 @@ export const addTodoAction = createAsyncThunk(
   "todos/add",
   async (payload, { rejectWithValue, getState, dispatch }) => {
     try {
-      const res = await axios.post(`${apis.todoApis.todos}/add`, {
+      const groupId = payload.groupId;
+      const res = await axios.post(`${apis.todoApis.todos}/${groupId}/add`, {
         text: payload.text,
       });
-      await dispatch(getTodosAction());
+      await dispatch(getTodosAction({ groupId }));
       return res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -50,7 +56,7 @@ export const editTodoAction = createAsyncThunk(
       const res = await axios.put(`${apis.todoApis.todos}/${payload.id}/edit`, {
         text: payload.newText,
       });
-      await dispatch(getTodosAction());
+      await dispatch(getTodosAction({ groupId: payload.groupId }));
       return res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -66,7 +72,7 @@ export const deleteTodoAction = createAsyncThunk(
       const res = await axios.delete(
         `${apis.todoApis.todos}/${payload.id}/delete`
       );
-      await dispatch(getTodosAction());
+      await dispatch(getTodosAction({ groupId: payload.groupId }));
       return res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -82,7 +88,35 @@ export const doneTodoAction = createAsyncThunk(
       const res = await axios.put(
         `${apis.todoApis.todos}/${payload.id}/done/${payload.done}`
       );
-      await dispatch(getTodosAction());
+      await dispatch(getTodosAction({ groupId: payload.groupId }));
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+//get todo groups
+export const getTodoGroupsAction = createAsyncThunk(
+  "todos/getTodoGroups",
+  async (payload, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const resp = await axios.get(apis.todoApis.todoGroups);
+      return resp.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+//add group
+export const addTodoGroupAction = createAsyncThunk(
+  "todos/addTodoGroup",
+  async (payload, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const res = await axios.post(`${apis.todoApis.todoGroups}/add`, {
+        name: "",
+      });
       return res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -98,6 +132,8 @@ const todosSlice = createSlice({
     //clean up todos arrays
     cleanTodoAction: (state, action) => {
       state.todos = [];
+      state.todoGroup = null;
+      state.todoGroups = [];
     },
     //change todos on input onChange event
     onChangeTodosAction: (state, action) => {
@@ -111,6 +147,10 @@ const todosSlice = createSlice({
     onChangeHideCompletedAction: (state, action) => {
       state.hideCompleted = action.payload.hideCompleted;
     },
+    onChangeTodoGroupAction: (state, action) => {
+      console.log(action.payload);
+      state.todoGroup = state.todoGroups[action.payload];
+    },
   },
   //async
   extraReducers: (builder) => {
@@ -120,12 +160,6 @@ const todosSlice = createSlice({
     });
     builder.addCase(getTodosAction.fulfilled, (state, action) => {
       state.loading = false;
-      /*
-      state.todos = action.payload.map((item) => ({
-        ...item,
-        changed: false,
-      }));
-      */
       state.todos = action.payload;
     });
     builder.addCase(getTodosAction.rejected, (state, action) => {
@@ -177,6 +211,34 @@ const todosSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     });
+    //getTodoGroups
+    builder.addCase(getTodoGroupsAction.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(getTodoGroupsAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.todoGroups = action.payload;
+      state.todoGroup = action.payload[0] || null;
+    });
+    builder.addCase(getTodoGroupsAction.rejected, (state, action) => {
+      state.todoGroups = [];
+      state.loading = false;
+      state.todoGroup = null;
+      state.error = action.payload;
+    });
+    //addTodoGroup
+    builder.addCase(addTodoGroupAction.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(addTodoGroupAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.todoGroup = action.payload;
+    });
+    builder.addCase(addTodoGroupAction.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      state.todoGroup = null;
+    });
   },
 });
 
@@ -186,6 +248,7 @@ export const {
   cleanTodoAction,
   onChangeTodosAction,
   onChangeHideCompletedAction,
+  onChangeTodoGroupAction,
 } = todosSlice.actions;
 
 export default todosReducer;

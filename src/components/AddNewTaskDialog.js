@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { stringUtils } from "../utils/utils";
 
-export default function AddNewTaskDialog({ userLoading, user, addTodo }) {
+export default function AddNewTaskDialog({ loading, user, addTodo }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const inputRef = useRef(null);
   const [text, setText] = useState("");
@@ -27,7 +27,7 @@ export default function AddNewTaskDialog({ userLoading, user, addTodo }) {
         }}
         colorScheme="blue"
         isDisabled={!user?.username}
-        isLoading={userLoading}
+        isLoading={loading}
       >
         Add New Task
       </Button>

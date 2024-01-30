@@ -22,20 +22,28 @@ import useTodoRouter from "../hooks/useTodoRouter";
 
 const Header = () => {
   const dispatch = useDispatch();
-  const navigate = useTodoRouter();
-
+  const { goToMain, goToHome, goToRegistration } = useTodoRouter();
   const { loading, user } = useSelector((state) => {
     return state?.users;
+  });
+  const { todoGroup } = useSelector((state) => {
+    return state?.todos;
   });
 
   useEffect(() => {
     dispatch(getCurrentUserAction());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (user?.username) {
+      goToMain(todoGroup?.id);
+    }
+  }, [goToMain, todoGroup, user]);
+
   const logout = () => {
     dispatch(logoutUserAction())
       .unwrap()
-      .then(() => navigate("/"))
+      .then(() => goToHome())
       .catch(() => {});
   };
 
@@ -68,10 +76,7 @@ const Header = () => {
             <LoginUser loading={loading} />
           )}
           {!user?.username && (
-            <Button
-              colorScheme="blue"
-              onClick={() => navigate("/registration")}
-            >
+            <Button colorScheme="blue" onClick={() => goToRegistration()}>
               Registration
             </Button>
           )}

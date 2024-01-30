@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const RegNewUser = () => {
   const dispatch = useDispatch();
-  const navigate = useTodoRouter();
+  const { goToHome } = useTodoRouter();
   const message = useTodoMessage();
   const { loading } = useSelector((state) => {
     return state?.users;
@@ -38,7 +38,7 @@ const RegNewUser = () => {
 
   const back = (e) => {
     e.preventDefault();
-    navigate("/");
+    goToHome();
   };
 
   const submit = (e) => {
@@ -57,7 +57,7 @@ const RegNewUser = () => {
         .unwrap()
         .then((payload) => {
           message.showSuccess(200, "OK");
-          navigate("/");
+          goToHome();
         })
         .catch((payload) => {
           message.showError(payload.status, payload.message);

@@ -20,6 +20,10 @@ const routerRules = createBrowserRouter([
             element: <Main />,
           },
           {
+            path: "/main/:groupId",
+            element: <Main />,
+          },
+          {
             path: "/registration",
             element: <RegNewUser />,
           },

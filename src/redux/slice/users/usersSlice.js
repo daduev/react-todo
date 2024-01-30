@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { cleanTodoAction, getTodosAction } from "../todos/todoSlice";
+import { cleanTodoAction, getTodoGroupsAction } from "../todos/todoSlice";
 import axios from "axios";
 import apis from "../../../utils/apis";
 
@@ -34,7 +34,7 @@ export const loginUserAction = createAsyncThunk(
         username,
         password,
       });
-      await dispatch(getTodosAction());
+      await dispatch(getTodoGroupsAction());
       return res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -62,6 +62,7 @@ export const getCurrentUserAction = createAsyncThunk(
   async (payload, { rejectWithValue, getState, dispatch }) => {
     try {
       const resp = await axios.get(apis.userApis.currentUser);
+      await dispatch(getTodoGroupsAction());
       return resp.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
