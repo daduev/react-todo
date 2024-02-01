@@ -7,6 +7,7 @@ import {
   HStack,
   IconButton,
   Button,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -54,12 +55,19 @@ const Header = () => {
         <Heading size="lg">
           ToDo
           <sup>
-            <Link to="/about">
-              <FontAwesomeIcon
-                icon={faCircleInfo}
-                style={{ color: "#ffffff" }}
-              />
-            </Link>
+            <Tooltip
+              label="About"
+              bg="gray.300"
+              color="black"
+              placement="right"
+            >
+              <Link to="/about">
+                <FontAwesomeIcon
+                  icon={faCircleInfo}
+                  style={{ color: "#ffffff" }}
+                />
+              </Link>
+            </Tooltip>
           </sup>
         </Heading>
       </Box>
