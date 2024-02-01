@@ -1,12 +1,17 @@
 import { VStack, Container, Button } from "@chakra-ui/react";
 import useTodoRouter from "../hooks/useTodoRouter";
+import { useSelector } from "react-redux";
 
 export default function About() {
+  const { user } = useSelector((state) => state?.users);
   const navigate = useTodoRouter();
 
   const back = (e) => {
-    e.preventDefault();
-    navigate("/");
+    if (user?.username) {
+      navigate("/main");
+    } else {
+      navigate("/");
+    }
   };
 
   return (

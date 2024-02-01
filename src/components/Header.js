@@ -36,10 +36,9 @@ const Header = () => {
 
   useEffect(() => {
     const currentPage = location.pathname;
-    if (currentPage === "/registration" || currentPage === "/about") {
-      return;
+    if (currentPage !== "/registration" && currentPage !== "/about") {
+      dispatch(getCurrentUserAction());
     }
-    dispatch(getCurrentUserAction());
   }, [dispatch, location]);
 
   const logout = () => {
