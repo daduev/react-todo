@@ -12,38 +12,24 @@ export default function About() {
   return (
     <VStack bg="#456797" padding={3}>
       <VStack color="white">
-        <Container maxW="700px" padding={1}>
+        <Container maxW="600px" padding={1}>
           The ToDo App: Streamlining Productivity
         </Container>
-        <Container maxW="700px" padding={1}>
+        <Container maxW="600px" padding={1}>
           In the hustle of daily life, the ToDo application stands out as a
           simple yet powerful tool for staying organized and boosting
           productivity. This digital task manager offers a user-friendly
-          platform to create, edit, and prioritize tasks effortlessly.
+          platform to create, edit, and mark as done tasks effortlessly.
         </Container>
 
-        <Container maxW="700px" padding={1}>
-          Designed for versatility, ToDo apps cater to students, professionals,
-          and individuals seeking a streamlined organizational solution. Users
-          can categorize tasks, assign priorities, and set reminders, tailoring
-          the experience to their specific needs.
-        </Container>
-
-        <Container maxW="700px" padding={1}>
+        <Container maxW="600px" padding={1}>
           Accessibility is a key feature, with most ToDo apps offering
           cross-platform synchronization. Whether on a computer, tablet, or
           smartphone, your to-do list remains at your fingertips, enhancing
           efficiency and peace of mind.
         </Container>
 
-        <Container maxW="700px" padding={1}>
-          As technology advances, ToDo applications evolve with collaborative
-          features, enabling users to share tasks and integrate seamlessly with
-          calendars. Smart notifications keep users informed, fostering a
-          proactive approach to task management.
-        </Container>
-
-        <Container maxW="700px" padding={1}>
+        <Container maxW="600px" padding={1}>
           In essence, the ToDo application is a beacon of productivity, offering
           a straightforward design and powerful features to empower users in
           taking control of their tasks. Harnessing its capabilities,
