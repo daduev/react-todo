@@ -13,7 +13,7 @@ export default function About() {
     <VStack bg="#456797" padding={3}>
       <VStack color="white">
         <Container maxW="700px" padding={1}>
-          Title: The ToDo App: Streamlining Productivity
+          The ToDo App: Streamlining Productivity
         </Container>
         <Container maxW="700px" padding={1}>
           In the hustle of daily life, the ToDo application stands out as a
