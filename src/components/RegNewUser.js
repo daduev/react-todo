@@ -11,7 +11,7 @@ import {
   HStack,
   Button,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { stringUtils } from "../utils/utils";
 import useTodoRouter from "../hooks/useTodoRouter";
 import useTodoMessage from "../hooks/useTodoMessage";
@@ -28,41 +28,55 @@ const RegNewUser = () => {
   const [form, setForm] = useState({
     newUsername: "",
     password: "",
-    touched: false,
+    invalid: false,
   });
-
-  const touched = (e) => {
-    e.preventDefault();
-    setForm({ ...form, touched: true });
-  };
 
   const back = (e) => {
     e.preventDefault();
     navigate("/");
   };
 
+  const validationCB = useCallback(() => {
+    const usernameInvalid = stringUtils.isTextEmpty(form.newUsername);
+    const passwordInvalid =
+      stringUtils.isTextEmpty(form.password) || form.password.length <= 3;
+
+    let passValidationMsg = "";
+    if (stringUtils.isTextEmpty(form.password)) {
+      passValidationMsg = "Password is required";
+    } else if (form.password.length <= 3) {
+      passValidationMsg = "Password length should not be less then 3";
+    }
+    return {
+      usernameInvalid,
+      passwordInvalid,
+      passValidationMsg,
+    };
+  }, [form.newUsername, form.password]);
+
   const submit = (e) => {
     e.preventDefault();
-    setForm({ ...form, touched: true });
-    if (
-      !stringUtils.isTextEmpty(form.newUsername) &&
-      !stringUtils.isTextEmpty(form.password)
-    ) {
-      dispatch(
-        signupUserAction({
-          username: form.newUsername,
-          password: form.password,
-        })
-      )
-        .unwrap()
-        .then((payload) => {
-          message.showSuccess(200, "OK");
-          navigate("/");
-        })
-        .catch((payload) => {
-          message.showError(payload.status, payload.message);
-        });
+
+    const validation = validationCB();
+    if (validation.usernameInvalid || validation.passwordInvalid) {
+      setForm({ ...form, invalid: true });
+      return;
     }
+
+    dispatch(
+      signupUserAction({
+        username: form.newUsername,
+        password: form.password,
+      })
+    )
+      .unwrap()
+      .then((payload) => {
+        message.showSuccess(200, "OK");
+        navigate("/");
+      })
+      .catch((payload) => {
+        message.showError(payload.status, payload.message);
+      });
   };
 
   return (
@@ -75,9 +89,7 @@ const RegNewUser = () => {
         <CardBody>
           <VStack>
             <FormControl
-              isInvalid={
-                form.touched && stringUtils.isTextEmpty(form.newUsername)
-              }
+              isInvalid={form.invalid && validationCB().usernameInvalid}
             >
               <FormLabel>Username</FormLabel>
               <Input
@@ -90,16 +102,16 @@ const RegNewUser = () => {
                   setForm({
                     ...form,
                     newUsername: e.target.value,
+                    invalid: false,
                   });
                 }}
-                onClick={touched}
               />
               <FormErrorMessage>Username is required</FormErrorMessage>
             </FormControl>
 
             <FormControl
               marginTop={5}
-              isInvalid={form.touched && stringUtils.isTextEmpty(form.password)}
+              isInvalid={form.invalid && validationCB().passwordInvalid}
             >
               <FormLabel>Password</FormLabel>
               <Input
@@ -112,11 +124,13 @@ const RegNewUser = () => {
                   setForm({
                     ...form,
                     password: e.target.value,
+                    invalid: false,
                   });
                 }}
-                onClick={touched}
               />
-              <FormErrorMessage>Password is required</FormErrorMessage>
+              <FormErrorMessage>
+                {validationCB().passValidationMsg}
+              </FormErrorMessage>
             </FormControl>
 
             <HStack justify="right" mt={7} w="100%" spacing={4}>
